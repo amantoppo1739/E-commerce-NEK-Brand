@@ -84,10 +84,10 @@ export default function AdminOrderDetailPage() {
   };
 
   const handleStatusChange = (newStatus: OrderStatus) => {
-    updateOrder({
-      status: newStatus,
-      trackingNumber: trackingNumber || undefined,
-      adminNotes: notes,
+    updateOrder({ 
+      status: newStatus, 
+      trackingNumber: trackingNumber || undefined, 
+      adminNotes: notes 
     });
   };
 

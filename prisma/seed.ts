@@ -79,15 +79,7 @@ const unsplashImages = {
   ],
 };
 
-type CategoryName = keyof typeof unsplashImages;
-
-type CategoryConfig = {
-  basePrice: number;
-  materials: string[];
-  sizes?: string[];
-};
-
-const categoryConfigs: Record<CategoryName, CategoryConfig> = {
+const categoryConfigs = {
   Necklaces: { basePrice: 750, materials: ['14K Gold', '18K Gold', 'Platinum'] },
   Rings: {
     basePrice: 1200,
@@ -126,7 +118,7 @@ function generateVariants(
     image: string | null;
   }[] = [];
 
-  if (config.sizes) {
+  if ('sizes' in config && config.sizes) {
     for (const size of config.sizes) {
       const material = randomFrom(config.materials, offset + variants.length);
       variants.push({
@@ -230,11 +222,32 @@ async function seedProducts() {
         ...productInfo,
         variants: {
           create: variants.map((variant) => {
-            const variantWithImage = variant as typeof variant & { image?: string | null };
-            return {
-              ...variant,
-              image: variantWithImage.image ?? productInfo.images[0] ?? null,
+            const v = variant as {
+              size?: string;
+              material: string;
+              price: number;
+              inventory: number;
+              sku: string;
+              image: string | null;
             };
+            const result: {
+              size?: string;
+              material: string;
+              price: number;
+              inventory: number;
+              sku: string;
+              image: string | null;
+            } = {
+              material: v.material,
+              price: v.price,
+              inventory: v.inventory,
+              sku: v.sku,
+              image: v.image ?? productInfo.images[0] ?? null,
+            };
+            if (v.size) {
+              result.size = v.size;
+            }
+            return result;
           }),
         },
       },

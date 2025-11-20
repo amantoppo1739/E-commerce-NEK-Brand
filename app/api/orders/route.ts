@@ -4,6 +4,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { sendOrderConfirmationEmail } from '@/lib/email';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -48,8 +50,18 @@ export async function GET(request: Request) {
     });
 
     return NextResponse.json(orders);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching orders:', error);
+    if (error.code === 'P1001') {
+      return NextResponse.json(
+        {
+          error: 'Database connection failed',
+          message: 'Cannot reach database server. Please check your database connection settings.',
+          code: 'DATABASE_CONNECTION_ERROR',
+        },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to fetch orders' },
       { status: 500 }
@@ -121,12 +133,30 @@ export async function POST(request: Request) {
         orderData.shippingAddress.email,
         orderNumber,
         orderData.total
-      ).catch(console.error);
+      )
+        .then((result) => {
+          if (!result.success) {
+            console.error('Failed to send order confirmation email:', result.error);
+          }
+        })
+        .catch((error) => {
+          console.error('Error sending order confirmation email:', error);
+        });
     }
 
     return NextResponse.json(order, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error creating order:', error);
+    if (error.code === 'P1001') {
+      return NextResponse.json(
+        {
+          error: 'Database connection failed',
+          message: 'Cannot reach database server. Please check your database connection settings.',
+          code: 'DATABASE_CONNECTION_ERROR',
+        },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to create order' },
       { status: 500 }

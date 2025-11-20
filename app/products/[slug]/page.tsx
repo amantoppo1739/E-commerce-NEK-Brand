@@ -9,15 +9,14 @@ interface ProductPageProps {
 }
 
 async function getProduct(slug: string): Promise<Product | null> {
-  try {
-    const product = await prisma.product.findUnique({
-      where: { slug },
-      include: {
-        variants: true,
-      },
-    });
+  const product = await prisma.product.findUnique({
+    where: { slug },
+    include: {
+      variants: true,
+    },
+  });
 
-    if (!product) return null;
+  if (!product) return null;
 
   // Convert to Product type format
   return {
@@ -37,14 +36,12 @@ async function getProduct(slug: string): Promise<Product | null> {
       sku: v.sku,
     })),
   };
-  } catch (error) {
-    console.error('Error fetching product:', error);
-    return null;
-  }
 }
 
-export const dynamic = 'force-dynamic'; // Force dynamic rendering to avoid build-time DB access
-export const dynamicParams = true; // Allow dynamic params that weren't generated at build time
+export const dynamic = 'force-dynamic';
+
+// Removed generateStaticParams to avoid database access during build
+// Products will be rendered on-demand
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const product = await getProduct(params.slug);

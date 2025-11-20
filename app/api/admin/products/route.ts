@@ -6,6 +6,8 @@ import { createProductSchema } from '@/lib/validators/adminProduct';
 import { LOW_INVENTORY_THRESHOLD } from '@/lib/constants/inventory';
 import type { ProductStatus } from '@/types/product';
 
+export const dynamic = 'force-dynamic';
+
 type ProductRecord = {
   id: string;
   name: string;

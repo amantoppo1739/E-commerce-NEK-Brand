@@ -15,11 +15,14 @@ export async function POST(request: Request) {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
+    console.log('🔍 Password reset requested for email:', normalizedEmail);
+    
     const user = await prisma.user.findUnique({
       where: { email: normalizedEmail },
     });
 
     if (user) {
+      console.log('✅ User found, generating password reset token...');
       const token = crypto.randomBytes(32).toString('hex');
       const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
 
@@ -35,9 +38,26 @@ export async function POST(request: Request) {
         },
       });
 
-      sendPasswordResetEmail(normalizedEmail, token).catch((error) =>
-        console.error('Error sending password reset email:', error)
-      );
+      console.log('📧 Sending password reset email to:', normalizedEmail);
+      sendPasswordResetEmail(normalizedEmail, token)
+        .then((result) => {
+          if (result.success) {
+            console.log('✅ Password reset email sent successfully to:', normalizedEmail);
+          } else {
+            console.error('❌ Failed to send password reset email:', result.error);
+            // Check if it's a domain restriction issue
+            if (result.error?.includes('only send testing emails') || result.error?.includes('verify a domain')) {
+              console.error('💡 Resend Limitation: Using test domain - can only send to your own email address');
+              console.error('   To send to any email, verify a domain at: https://resend.com/domains');
+            }
+          }
+        })
+        .catch((error) => {
+          console.error('❌ Error sending password reset email:', error);
+        });
+    } else {
+      console.log('⚠️ User not found for email:', normalizedEmail);
+      console.log('   (This is normal - we return success to prevent email enumeration)');
     }
 
     // Always return success to prevent email enumeration

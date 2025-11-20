@@ -23,8 +23,18 @@ export async function GET(
     }
 
     return NextResponse.json(product);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching product:', error);
+    if (error.code === 'P1001') {
+      return NextResponse.json(
+        {
+          error: 'Database connection failed',
+          message: 'Cannot reach database server. Please check your database connection settings.',
+          code: 'DATABASE_CONNECTION_ERROR',
+        },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to fetch product' },
       { status: 500 }

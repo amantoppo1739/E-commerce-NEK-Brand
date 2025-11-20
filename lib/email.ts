@@ -12,21 +12,64 @@ export async function sendEmail({
   html: string;
 }) {
   if (!process.env.RESEND_API_KEY) {
-    console.warn('RESEND_API_KEY not set, email not sent');
-    return { success: false, error: 'Email service not configured' };
+    const error = 'RESEND_API_KEY not set in environment variables';
+    console.error('❌ Email Service Error:', error);
+    console.error('💡 To fix: Add RESEND_API_KEY to your .env.local file');
+    console.error('   Get your API key from: https://resend.com/api-keys');
+    return { success: false, error };
   }
 
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'NEK <onboarding@resend.dev>';
+  
   try {
-    const data = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'NEK <onboarding@resend.dev>',
+    console.log('📧 Attempting to send email:', { to, subject, from: fromEmail });
+    
+    const response = await resend.emails.send({
+      from: fromEmail,
       to,
       subject,
       html,
     });
-    return { success: true, data };
-  } catch (error) {
-    console.error('Error sending email:', error);
-    return { success: false, error };
+    
+    // Check if Resend returned an error in the response
+    if (response.error) {
+      console.error('❌ Resend API returned an error:', response.error);
+      const errorMessage = response.error.message || 'Unknown error from Resend';
+      
+      // Provide helpful error messages
+      if (errorMessage.includes('only send testing emails')) {
+        console.error('💡 Resend Limitation: You can only send to your own email (amantoppo1739@gmail.com) with test domain');
+        console.error('   To send to any email, verify a domain at: https://resend.com/domains');
+      } else if (errorMessage.includes('API key')) {
+        console.error('💡 Check that your RESEND_API_KEY is correct');
+      } else if (errorMessage.includes('domain') || errorMessage.includes('from')) {
+        console.error('💡 For development, use: RESEND_FROM_EMAIL="NEK <onboarding@resend.dev>"');
+        console.error('   For production, verify your domain in Resend dashboard');
+      }
+      
+      return { success: false, error: errorMessage, data: response };
+    }
+    
+    console.log('✅ Email sent successfully:', response);
+    return { success: true, data: response };
+  } catch (error: any) {
+    console.error('❌ Error sending email:', error);
+    console.error('Error details:', {
+      message: error?.message,
+      status: error?.status,
+      response: error?.response,
+    });
+    
+    // Provide helpful error messages
+    if (error?.message?.includes('API key')) {
+      console.error('💡 Check that your RESEND_API_KEY is correct');
+    }
+    if (error?.message?.includes('domain') || error?.message?.includes('from')) {
+      console.error('💡 For development, use: RESEND_FROM_EMAIL="NEK <onboarding@resend.dev>"');
+      console.error('   For production, verify your domain in Resend dashboard');
+    }
+    
+    return { success: false, error: error?.message || 'Unknown error' };
   }
 }
 

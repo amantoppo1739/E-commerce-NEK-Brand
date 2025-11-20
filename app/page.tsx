@@ -3,21 +3,16 @@ import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/ProductCard';
 import Image from 'next/image';
 
-export const dynamic = 'force-dynamic'; // Force dynamic rendering to avoid build-time DB access
+export const dynamic = 'force-dynamic';
 
 async function getFeaturedProducts() {
-  try {
-    return await prisma.product.findMany({
-      where: { featured: true },
-      include: {
-        variants: true,
-      },
-      take: 6,
-    });
-  } catch (error) {
-    console.error('Error fetching featured products:', error);
-    return [];
-  }
+  return await prisma.product.findMany({
+    where: { featured: true },
+    include: {
+      variants: true,
+    },
+    take: 6,
+  });
 }
 
 export default async function HomePage() {
@@ -25,19 +20,14 @@ export default async function HomePage() {
   
   // Get one product per category for category section
   const categories = ['Necklaces', 'Rings', 'Earrings', 'Bracelets'];
-  let categoryProducts = [];
-  try {
-    categoryProducts = await Promise.all(
-      categories.map((category) =>
-        prisma.product.findFirst({
-          where: { category },
-          include: { variants: true },
-        })
-      )
-    );
-  } catch (error) {
-    console.error('Error fetching category products:', error);
-  }
+  const categoryProducts = await Promise.all(
+    categories.map((category) =>
+      prisma.product.findFirst({
+        where: { category },
+        include: { variants: true },
+      })
+    )
+  );
 
   return (
     <div className="flex flex-col">

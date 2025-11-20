@@ -63,8 +63,24 @@ export async function GET() {
         totalInventory,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching stats:', error);
+    if (error.code === 'P1001') {
+      return NextResponse.json(
+        {
+          error: 'Database connection failed',
+          message: 'Cannot reach database server. Please check your database connection settings.',
+          code: 'DATABASE_CONNECTION_ERROR',
+          troubleshooting: [
+            'Check your DATABASE_URL in .env.local is correct',
+            'Your Supabase database might be paused (free tier pauses after inactivity)',
+            'Go to Supabase dashboard → Settings → Database → Wake up database if paused',
+            'If using pooler connection, ensure ?pgbouncer=true is in the connection string',
+          ],
+        },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to fetch stats' },
       { status: 500 }

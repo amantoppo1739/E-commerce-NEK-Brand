@@ -31,8 +31,18 @@ export async function GET() {
     // Remove sensitive data
     const { password, ...userWithoutPassword } = user;
     return NextResponse.json(userWithoutPassword);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching user:', error);
+    if (error.code === 'P1001') {
+      return NextResponse.json(
+        {
+          error: 'Database connection failed',
+          message: 'Cannot reach database server. Please check your database connection settings.',
+          code: 'DATABASE_CONNECTION_ERROR',
+        },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to fetch user' },
       { status: 500 }

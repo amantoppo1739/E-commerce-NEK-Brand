@@ -32,7 +32,9 @@ if (process.env.SENTRY_DSN) {
     silent: true,
     org: process.env.SENTRY_ORG,
     project: process.env.SENTRY_PROJECT,
-    hideSourceMaps: true, // Hide source maps in production to prevent code visibility
+    hideSourceMaps: true, // Hide source maps in production to prevent code exposure
+    // Note: If SENTRY_AUTH_TOKEN is not set, source maps won't be uploaded
+    // This is fine - Sentry will still work, just without source map support
   });
 } else {
   module.exports = nextConfig;

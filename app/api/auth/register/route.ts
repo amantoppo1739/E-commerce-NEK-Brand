@@ -46,7 +46,15 @@ export async function POST(request: Request) {
     });
 
     // Send welcome email (non-blocking)
-    sendWelcomeEmail(user.email, user.firstName).catch(console.error);
+    sendWelcomeEmail(user.email, user.firstName)
+      .then((result) => {
+        if (!result.success) {
+          console.error('Failed to send welcome email:', result.error);
+        }
+      })
+      .catch((error) => {
+        console.error('Error sending welcome email:', error);
+      });
 
     // Remove sensitive data
     const { password: _, ...userWithoutPassword } = user;
