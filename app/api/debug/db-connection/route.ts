@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { testDatabaseConnection } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,23 +9,35 @@ export async function GET() {
     ? dbUrl.replace(/:[^:@]+@/, ':****@') // Mask password
     : 'Not set';
 
-  try {
-    await prisma.$queryRaw`SELECT 1`;
+  const result = await testDatabaseConnection();
+  const host = dbUrl?.match(/@([^:]+):/)?.[1] || 'unknown';
+  const isPooler = dbUrl?.includes('pooler.supabase.com') || false;
+  const hasPgbouncer = dbUrl?.includes('pgbouncer=true') || false;
+  const hasSsl = dbUrl?.includes('sslmode') || false;
+
+  if (result.success) {
     return NextResponse.json({
       success: true,
-      message: 'Database connection successful',
+      message: result.message,
       databaseUrl: maskedUrl,
-      host: dbUrl?.match(/@([^:]+):/)?.[1] || 'unknown',
+      host,
+      connectionType: isPooler ? 'Session Pooler' : 'Direct',
+      hasPgbouncer,
+      hasSsl,
     });
-  } catch (error: any) {
+  } else {
     return NextResponse.json(
       {
         success: false,
-        message: 'Database connection failed',
-        error: error.message,
+        message: result.message,
+        error: (result as any).error,
         databaseUrl: maskedUrl,
-        host: dbUrl?.match(/@([^:]+):/)?.[1] || 'unknown',
-        code: error.code,
+        host,
+        connectionType: isPooler ? 'Session Pooler' : 'Direct',
+        hasPgbouncer,
+        hasSsl,
+        suggestions: (result as any).suggestions || [],
+        code: (result as any).error?.code,
       },
       { status: 500 }
     );
