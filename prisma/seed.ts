@@ -283,6 +283,17 @@ async function seedOrders(userId: string) {
     const shipping = i % 3 === 0 ? 39.99 : 24.99;
     const tax = parseFloat((subtotal * 0.08).toFixed(2));
     const total = subtotal + shipping + tax;
+    const orderNumber = `NEK-MOCK-${(1000 + i).toString()}`;
+
+    // Check if order already exists
+    const existingOrder = await prisma.order.findUnique({
+      where: { orderNumber },
+    });
+
+    if (existingOrder) {
+      console.log(`   ⏭️  Order ${orderNumber} already exists, skipping...`);
+      continue;
+    }
 
     await prisma.order.create({
       data: {

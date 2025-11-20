@@ -11,8 +11,7 @@ export async function GET() {
 
   const result = await testDatabaseConnection();
   const host = dbUrl?.match(/@([^:]+):/)?.[1] || 'unknown';
-  const isPooler = dbUrl?.includes('pooler.supabase.com') || false;
-  const hasPgbouncer = dbUrl?.includes('pgbouncer=true') || false;
+  const isNeon = dbUrl?.includes('neon.tech') || false;
   const hasSsl = dbUrl?.includes('sslmode') || false;
 
   if (result.success) {
@@ -21,23 +20,23 @@ export async function GET() {
       message: result.message,
       databaseUrl: maskedUrl,
       host,
-      connectionType: isPooler ? 'Session Pooler' : 'Direct',
-      hasPgbouncer,
+      connectionType: isNeon ? 'Neon' : 'Unknown',
       hasSsl,
     });
   } else {
+    const errorResult = result as any;
     return NextResponse.json(
       {
         success: false,
-        message: result.message,
-        error: (result as any).error,
+        message: errorResult.message,
+        error: errorResult.error,
         databaseUrl: maskedUrl,
         host,
-        connectionType: isPooler ? 'Session Pooler' : 'Direct',
-        hasPgbouncer,
+        connectionType: isNeon ? 'Neon' : 'Unknown',
         hasSsl,
-        suggestions: (result as any).suggestions || [],
-        code: (result as any).error?.code,
+        suggestions: errorResult.suggestions || [],
+        diagnostics: errorResult.diagnostics || {},
+        code: errorResult.error?.code,
       },
       { status: 500 }
     );

@@ -57,7 +57,7 @@ A modern, luxury e-commerce platform built with Next.js 14, featuring server-sid
 
 - Node.js 18+ 
 - npm, yarn, or pnpm
-- Free accounts for: Supabase, Resend, Cloudinary (Sentry optional)
+- Free accounts for: Neon, Resend, Cloudinary (Sentry optional)
 
 ### Quick Setup
 
@@ -67,7 +67,7 @@ npm install
 ```
 
 2. **Set up free services:**
-   - Create Supabase account → Get database URL
+   - Create Neon account → Get database connection string
    - Create Resend account → Get API key
    - Create Cloudinary account → Get credentials
    - (Optional) Create Sentry account → Get DSN

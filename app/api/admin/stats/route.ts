@@ -73,8 +73,8 @@ export async function GET() {
           code: 'DATABASE_CONNECTION_ERROR',
           troubleshooting: [
             'Check your DATABASE_URL in .env.local is correct',
-            'Your Supabase database might be paused (free tier pauses after inactivity)',
-            'Go to Supabase dashboard → Settings → Database → Wake up database if paused',
+            'Your Neon database might be paused (free tier pauses after inactivity)',
+            'Go to Neon dashboard → Your project → Database will wake up automatically on connection',
             'If using pooler connection, ensure ?pgbouncer=true is in the connection string',
           ],
         },

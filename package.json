@@ -11,7 +11,8 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
-    "db:test": "node scripts/test-db-connection.js"
+    "db:test": "node scripts/test-db-connection.js",
+    "db:setup-neon": "node scripts/setup-neon.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.0",

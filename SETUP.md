@@ -16,15 +16,25 @@ npm install
 
 ## Step 2: Set Up Free Services
 
-### 2.1 Supabase (Database) - FREE
+ ### 2.1 Database - Choose One (Both FREE)
 
-1. Go to [supabase.com](https://supabase.com)
-2. Sign up for free account
-3. Create a new project
-4. Go to Project Settings → Database
-5. Copy the connection string (it looks like: `postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres`)
-6. Replace `[YOUR-PASSWORD]` with your database password
+#### Option A: Neon (Recommended) ⭐
+
+**Why Neon?** Faster connections, better for serverless, no slow wake-up times.
+
+1. Go to [neon.tech](https://neon.tech)
+2. Sign up for free account (GitHub/Google/Email)
+3. Click "Create Project"
+4. Fill in project details:
+   - **Project name:** `e-commerce-nek-brand`
+   - **Region:** Choose closest to you
+   - **PostgreSQL version:** 15 or 16
+5. Click "Create Project"
+6. Copy the connection string (it looks like: `postgresql://username:password@ep-xxx-xxx.region.aws.neon.tech/neondb?sslmode=require`)
 7. Save this for Step 3
+
+**Quick test:** After setup, run `npm run db:setup-neon` to verify connection.
+
 
 ### 2.2 Resend (Email) - FREE (3,000 emails/month)
 
@@ -65,8 +75,8 @@ npm install
 2. Open `.env.local` and fill in your values:
 
 ```env
-# Database - From Supabase
-DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT.supabase.co:5432/postgres"
+# Database - From Neon
+DATABASE_URL="postgresql://[user]:[password]@ep-xxx-xxx.region.aws.neon.tech/neondb?sslmode=require"
 
 # NextAuth - Generate secret with: openssl rand -base64 32
 NEXTAUTH_URL="http://localhost:3000"
@@ -107,7 +117,7 @@ Copy the output and paste it as `NEXTAUTH_SECRET` in your `.env.local`.
    npm run db:generate
    ```
 
-2. Push database schema to Supabase:
+2. Push database schema to Neon:
    ```bash
    npm run db:push
    ```
@@ -164,8 +174,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ### Database Connection Issues
 
 - Verify your `DATABASE_URL` is correct
-- Check that your Supabase project is active
-- Ensure your IP is allowed (Supabase allows all by default)
+- Check that your Neon project is active
+- Neon allows connections from all IPs by default
 
 ### Email Not Sending
 

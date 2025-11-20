@@ -2,7 +2,7 @@
 
 ## ✅ What Has Been Implemented
 
-### 1. Database Setup (Prisma + Supabase)
+### 1. Database Setup (Prisma + Neon)
 - ✅ Complete Prisma schema with all models:
   - Users, Accounts, Sessions (NextAuth)
   - Products, ProductVariants
@@ -78,8 +78,8 @@
 
 ### Step 1: Set Up Free Accounts (5-10 minutes)
 
-1. **Supabase** (Database)
-   - Sign up at supabase.com
+1. **Neon** (Database)
+   - Sign up at neon.tech
    - Create a new project
    - Get your database connection string
 
@@ -201,7 +201,7 @@ npm run dev
 
 1. **Environment Variables**: Never commit `.env.local` to git (already in `.gitignore`)
 
-2. **Database**: Make sure to backup your Supabase database regularly
+2. **Database**: Make sure to backup your Neon database regularly
 
 3. **Email Domain**: For production, verify your domain with Resend
 

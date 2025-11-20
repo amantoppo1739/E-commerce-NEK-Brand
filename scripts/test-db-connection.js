@@ -1,3 +1,34 @@
+// Load environment variables - prioritize .env.local over .env
+const fs = require('fs');
+const path = require('path');
+
+// Try to load .env.local first, then .env
+const envLocalPath = path.join(process.cwd(), '.env.local');
+const envPath = path.join(process.cwd(), '.env');
+
+if (fs.existsSync(envLocalPath)) {
+  const envLocal = fs.readFileSync(envLocalPath, 'utf8');
+  envLocal.split('\n').forEach(line => {
+    const match = line.match(/^([^#=]+)=(.*)$/);
+    if (match && !process.env[match[1].trim()]) {
+      const value = match[2].trim().replace(/^["']|["']$/g, '');
+      process.env[match[1].trim()] = value;
+    }
+  });
+}
+
+// Fallback to .env if .env.local doesn't have DATABASE_URL
+if (!process.env.DATABASE_URL && fs.existsSync(envPath)) {
+  const env = fs.readFileSync(envPath, 'utf8');
+  env.split('\n').forEach(line => {
+    const match = line.match(/^([^#=]+)=(.*)$/);
+    if (match && !process.env[match[1].trim()]) {
+      const value = match[2].trim().replace(/^["']|["']$/g, '');
+      process.env[match[1].trim()] = value;
+    }
+  });
+}
+
 const { PrismaClient } = require('@prisma/client');
 
 const prisma = new PrismaClient();
@@ -31,21 +62,21 @@ async function testConnection() {
     
     if (error.code === 'P1001') {
       console.log('\n💡 Troubleshooting steps:');
-      console.log('1. Check if your Supabase database is paused:');
-      console.log('   → Go to https://supabase.com/dashboard');
+      console.log('1. Check if your Neon database is active:');
+      console.log('   → Go to https://neon.tech/dashboard');
       console.log('   → Select your project');
-      console.log('   → Go to Settings → Database');
-      console.log('   → Click "Restore" or "Wake up" if paused\n');
+      console.log('   → Verify the database is running (Neon wakes up quickly if paused)\n');
       
       console.log('2. Verify your DATABASE_URL format:');
-      console.log('   Direct connection: postgresql://postgres:[PASSWORD]@db.[PROJECT].supabase.co:5432/postgres');
-      console.log('   Pooler connection: postgresql://postgres:[PASSWORD]@aws-1-ap-south-1.pooler.supabase.com:5432/postgres?pgbouncer=true\n');
+      console.log('   Neon connection: postgresql://[user]:[password]@ep-xxx-xxx.region.aws.neon.tech/neondb?sslmode=require\n');
       
-      console.log('3. Try using the direct connection string instead of pooler:');
-      console.log('   → Go to Supabase Dashboard → Settings → Database');
-      console.log('   → Copy the "Connection string" (not "Connection pooling")\n');
+      console.log('3. Get your connection string from Neon:');
+      console.log('   → Go to Neon Dashboard → Your Project');
+      console.log('   → Copy the connection string from the project overview\n');
       
-      console.log('4. Check your database password is correct in the connection string');
+      console.log('4. Check your connection string is correct:');
+      console.log('   → Ensure it includes ?sslmode=require');
+      console.log('   → Verify username and password are correct');
     }
     
     process.exit(1);
