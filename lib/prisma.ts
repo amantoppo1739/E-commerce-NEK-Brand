@@ -48,3 +48,14 @@ export async function testDatabaseConnection() {
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
+/**
+ * Disconnect and reset Prisma client
+ * Useful when DATABASE_URL changes and you need to reconnect
+ */
+export async function resetPrismaClient() {
+  if (globalForPrisma.prisma) {
+    await globalForPrisma.prisma.$disconnect();
+    globalForPrisma.prisma = undefined;
+  }
+}
+
