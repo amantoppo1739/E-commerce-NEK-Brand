@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import type { Address } from '@/types/order';
+import { prisma } from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
@@ -141,6 +142,8 @@ export async function GET(request: Request) {
 
     const formattedOrders = orders.map((order) => ({
       ...order,
+      shippingAddress: order.shippingAddress as Address | null,
+      billingAddress: order.billingAddress as Address | null,
       itemCount: order.items.reduce((count, item) => count + item.quantity, 0),
     }));
 
@@ -172,13 +175,13 @@ export async function GET(request: Request) {
       ];
 
       const rows = formattedOrders.map((order) => {
-        const customerName = `${order.shippingAddress.firstName ?? ''} ${
-          order.shippingAddress.lastName ?? ''
+        const customerName = `${order.shippingAddress?.firstName ?? ''} ${
+          order.shippingAddress?.lastName ?? ''
         }`.trim();
         return [
           toCsvValue(order.orderNumber),
           toCsvValue(customerName),
-          toCsvValue(order.shippingAddress.email ?? order.user?.email ?? ''),
+          toCsvValue(order.shippingAddress?.email ?? order.user?.email ?? ''),
           toCsvValue(order.status),
           toCsvValue(order.paymentStatus),
           toCsvValue(order.total),

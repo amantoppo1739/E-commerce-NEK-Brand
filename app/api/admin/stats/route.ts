@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -23,7 +25,6 @@ export async function GET() {
       shippedOrders,
       deliveredOrders,
       paidOrders,
-      totalRevenue,
     ] = await Promise.all([
       prisma.order.count(),
       prisma.order.count({ where: { status: 'pending' } }),

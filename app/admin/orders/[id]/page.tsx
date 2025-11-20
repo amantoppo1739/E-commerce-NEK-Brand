@@ -84,7 +84,11 @@ export default function AdminOrderDetailPage() {
   };
 
   const handleStatusChange = (newStatus: OrderStatus) => {
-    updateOrder({ status: newStatus, trackingNumber: trackingNumber || null, adminNotes: notes });
+    updateOrder({
+      status: newStatus,
+      trackingNumber: trackingNumber || undefined,
+      adminNotes: notes,
+    });
   };
 
   const handleNotesSave = () => {
@@ -220,7 +224,7 @@ export default function AdminOrderDetailPage() {
                     type="text"
                     value={trackingNumber}
                     onChange={(e) => setTrackingNumber(e.target.value)}
-                    onBlur={() => updateOrder({ trackingNumber: trackingNumber || null })}
+                    onBlur={() => updateOrder({ trackingNumber: trackingNumber || undefined })}
                     placeholder="Enter tracking"
                     className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
                   />

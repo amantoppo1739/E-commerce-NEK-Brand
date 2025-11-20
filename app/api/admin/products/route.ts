@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 import { createProductSchema } from '@/lib/validators/adminProduct';
 import { LOW_INVENTORY_THRESHOLD } from '@/lib/constants/inventory';
 import type { ProductStatus } from '@/types/product';

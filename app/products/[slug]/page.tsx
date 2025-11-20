@@ -39,14 +39,18 @@ async function getProduct(slug: string): Promise<Product | null> {
 }
 
 export async function generateStaticParams() {
-  // Generate static paths for all products at build time
-  const products = await prisma.product.findMany({
-    select: { slug: true },
-  });
+  try {
+    const products = await prisma.product.findMany({
+      select: { slug: true },
+    });
 
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
+    return products.map((product) => ({
+      slug: product.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating product params:', error);
+    return [];
+  }
 }
 
 export const revalidate = 3600; // Revalidate every hour (ISR)

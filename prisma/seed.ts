@@ -79,7 +79,15 @@ const unsplashImages = {
   ],
 };
 
-const categoryConfigs = {
+type CategoryName = keyof typeof unsplashImages;
+
+type CategoryConfig = {
+  basePrice: number;
+  materials: string[];
+  sizes?: string[];
+};
+
+const categoryConfigs: Record<CategoryName, CategoryConfig> = {
   Necklaces: { basePrice: 750, materials: ['14K Gold', '18K Gold', 'Platinum'] },
   Rings: {
     basePrice: 1200,
@@ -221,10 +229,13 @@ async function seedProducts() {
       create: {
         ...productInfo,
         variants: {
-          create: variants.map((variant) => ({
-            ...variant,
-            image: variant.image ?? productInfo.images[0] ?? null,
-          })),
+          create: variants.map((variant) => {
+            const variantWithImage = variant as typeof variant & { image?: string | null };
+            return {
+              ...variant,
+              image: variantWithImage.image ?? productInfo.images[0] ?? null,
+            };
+          }),
         },
       },
     });
