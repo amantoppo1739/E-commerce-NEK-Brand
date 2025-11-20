@@ -32,6 +32,7 @@ if (process.env.SENTRY_DSN) {
     silent: true,
     org: process.env.SENTRY_ORG,
     project: process.env.SENTRY_PROJECT,
+    hideSourceMaps: true, // Hide source maps in production to prevent code visibility
   });
 } else {
   module.exports = nextConfig;
