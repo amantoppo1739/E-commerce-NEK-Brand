@@ -225,7 +225,7 @@ The design follows modern e-commerce best practices seen in luxury brands like:
 
 ### User Access
 - Email: `user@example.com`
-- Password: Any password works (demo mode)
+- Password: user123
 
 ## Pages Overview
 
