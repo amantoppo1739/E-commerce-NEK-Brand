@@ -166,8 +166,8 @@ For detailed setup instructions, see [SETUP.md](./SETUP.md).
 - Session management with localStorage
 - Forgot password + secure reset tokens
 - Demo credentials:
-  - Admin: `admin@nek.com` / any password
-  - User: `user@example.com` / any password
+  - Admin: `admin@nek.com` / admin123
+  - User: `user@example.com` / user123
 
 ### Order Management
 
@@ -221,7 +221,7 @@ The design follows modern e-commerce best practices seen in luxury brands like:
 
 ### Admin Access
 - Email: `admin@nek.com`
-- Password: Any password works (demo mode)
+- Password: admin123
 
 ### User Access
 - Email: `user@example.com`
@@ -250,11 +250,11 @@ The design follows modern e-commerce best practices seen in luxury brands like:
 
 ### Admin Access
 - Email: `admin@nek.com`
-- Password: Any password works (demo mode)
+- Password: admin123
 
 ### User Access
 - Email: `user@example.com`
-- Password: Any password works (demo mode)
+- Password: user123
 
 ## Pages Overview
 
