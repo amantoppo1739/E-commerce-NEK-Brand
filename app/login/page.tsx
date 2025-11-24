@@ -1,4 +1,4 @@
-'use client';
+123'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -116,7 +116,7 @@ export default function LoginPage() {
         <div className="mt-6 text-center text-sm text-gray-600">
           <p className="mb-2">Demo credentials:</p>
           <p>Admin: admin@nek.com / admin123</p>
-          <p>User: user@example.com / any password</p>
+          <p>User: user@example.com / user123</p>
           <p className="mt-4 text-xs text-gray-500">
             If you see the wrong view, clear your browser's localStorage and try again.
           </p>
